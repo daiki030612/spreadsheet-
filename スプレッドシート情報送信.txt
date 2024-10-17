@@ -1,0 +1,38 @@
+/** @OnlyCurrentDoc */
+function notice() {
+  var activeSpreadsheet = SpreadsheetApp.getActiveSpreadsheet(); 
+//スプレッドシートを取得
+  var activeSheet = SpreadsheetApp.getActive().getSheetByName('新規ページ必要情報'); 
+//★シート名を記入してください
+  var activeCell = activeSheet.getActiveCell(); 
+  //アクティブなセルを取得
+  if(activeCell.getColumn()==10 && activeCell.getValues() == "済"){ 
+//★アクティブなセルが★J列かつ★チェックかを判定
+
+  var Name = activeSheet.getRange(activeCell.getRow(), 1).getValues();
+  var TVName = activeSheet.getRange(activeCell.getRow(), 2).getValues();
+//★A,B列の案件名を取得します
+
+   //★送信するSlackのテキストを指定します
+   　var slackText = "営業所名" + Name + "\n" + "番組名" + TVName + "\n" + "https://docs.google.com/spreadsheets/d/1NXQn4aRamGXGPeB-P3hR1HGSyFR52wy5dwvoupyWcmA/edit?pli=1&gid=524851768#gid=524851768";
+   sendSlack2(slackText);
+  }
+}
+function sendSlack2(slackText){
+  var webHookUrl = "https://hooks.slack.com/services/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";
+//★はじめに取得したWebhook URLを設定してください
+  var jsonData =
+    {
+   　　 'icon_emoji' : ':star2:',//★好きなアイコンを設定してください       
+　　　　　　　　　　"text" : slackText,
+     "username" : "新規作成"//★アイコンの名前を入れてください
+    };
+  var payload = JSON.stringify(jsonData);
+  var options =
+     {
+       "method" : "post",
+       "contentType" : "application/json",
+       "payload" : payload,
+     };
+ UrlFetchApp.fetch(webHookUrl, options);
+}
